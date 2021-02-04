@@ -40,7 +40,7 @@ client.on('message', msg => {
 		if(cmnd === 'help') {
 			embed.setTitle('Help')
       embed.addField('Valid commands are:', '> help \n> gitProject \n> status')
-			embed.addField('If you ever forget the prefix:', `> type ${'`Manager`'} \n> ping the bot`)
+			embed.addField('If you ever forget the prefix:', `> type ${'`Fuck`'} \n> ping the bot`)
 			embed.addField('Prefix', `The prefix is ${'`' + prefix + '`'}`)
       channel.send(embed)
       embed.fields = []
