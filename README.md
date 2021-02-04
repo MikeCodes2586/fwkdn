@@ -2,4 +2,4 @@
 
 This is going to be a general purpose discord bot for personal use
 
-Licensed under ISC
+Licensed under MIT
