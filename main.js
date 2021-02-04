@@ -48,7 +48,7 @@ client.on('message', msg => {
 			channel.send('https://github.com/MikeCodes2586/fwkdn')
 		} else if(cmnd === 'status') {
 			embed.setTitle('Status')
-			embed.addField('Fwfdn?! is currently running!', '(っ◔◡◔)っ')
+			embed.addField('Fwkdn?! is currently running!', '(っ◔◡◔)っ')
 			channel.send(embed)
 			embed.fields = []
 		}
