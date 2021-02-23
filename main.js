@@ -4,6 +4,8 @@ const fs = require('fs')
 
 const { token, prefix } = require('./info.json')
 
+const time = new Date()
+
 const embed = new Discord.MessageEmbed() // sets embed defaults
     .setColor("#39ff14") // neon green
 //
@@ -18,41 +20,80 @@ let newUser = {
 
 let rVal = false
 let index
+let BDay
 
 function load(file = String) {
-		return JSON.parse(
-				fs.readFileSync(file).toString()
-		)
+	return JSON.parse(
+		fs.readFileSync(file).toString()
+	)
 }
 
 function save(json = String, file = String) {
-		return fs.writeFileSync(
-			file, 
-			JSON.stringify(
-				json, 
-				null, 
-				1
-			)
+	return fs.writeFileSync(
+		file, 
+		JSON.stringify(
+			json, 
+			null, 
+			1
 		)
+	)
 }
 
 let data = load(dataFile)
 
-function userInDatabase(id) {
+function userInDatabase(id, bday) {
 	data.forEach(obj => {
-			Object.entries(obj).forEach(([key, value]) => {
-					if (key === 'id') {
-							if (value === id) {
-									rVal = true
-									index = data.findIndex(x => x.id === value)
-							}
+		Object.entries(obj).forEach(([key, value]) => {
+			if (key === 'id') {
+				if (value === id) {
+					rVal = true
+					index = data.findIndex(x => x.id === value)
+					if(bday === true) {
+						if (data[index].birthday) {
+							BDay = data[index].birthday
+						} else {
+							return
+						}
 					}
-			})
+				}
+			}
+		})
+	})
+}
+
+/*channel ids: 
+ * 756831344364879875
+ * 749210894692515880
+*/
+function bDayCheck() {
+	data.forEach(obj => {
+		Object.entries(obj).forEach(([key, value]) => {
+			if (key === 'id') {
+				bdayid = value
+			}
+
+			if (key === 'birthday') {
+				if (value !== "") {
+					let date = value
+					let dateArr = date.split('.')
+					
+					if (parseInt(dateArr[0]) === time.getDate() && parseInt(dateArr[1]) === time.getMonth() + 1) {
+						embed.setTitle('Happy Birthday')
+						embed.addField(`<@everyone> Today is <@${bdayid}>'s birthday`, 'Congratulations!!!')
+						client.channels.cache.get('749210894692515880').send(embed)
+						client.channels.cache.get('749210894692515880').send(embed)
+						embed.fields = []
+					}
+				}
+			}
+		})
 	})
 }
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}`)
+
+	repeatBDayCheck = setInterval(bDayCheck, 86400000)
 
 	client.guilds.cache.forEach(guild => {
 		guild.members.cache.forEach(member => {
@@ -111,7 +152,7 @@ client.on('message', msg => {
 		} else if(cmnd === 'ban') {
 			const toBan = msg.mentions.members.first()
 			const reason = args[1]
-			if(toBan) {
+			if(toBan && reason) {
 				const resolvedToBan = msg.guild.member(toBan)
 				if (resolvedToBan) {
 					resolvedToBan
@@ -193,9 +234,9 @@ client.on('message', msg => {
 				let date = args[0]
 				let dateArr = date.split('.')
 
-				if(dateArr[0].length > 2 || dateArr[0].length < 2 || dateArr[1].length > 2 || dateArr[1].length < 2 || dateArr.length > 2 || dateArr.length < 2) {
+				if(dateArr[0].length > 2 || dateArr[0].length < 1 || dateArr[1].length > 2 || dateArr[1].length < 1 || dateArr.length > 2 || dateArr.length < 2 || parseInt(dateArr[0]) > 31 || parseInt(args[0]) < 1 || parseInt(args[1]) > 12 || parseInt(args[1]) < 1) {
 					embed.setTitle('Error')
-					embed.addField('Some values are wrong!', 'Try `>addBDay dd.mm`')
+					embed.addField('Some values are wrong!', 'Try `>addBDay day.month`, day and month being numbers')
 					channel.send(embed)
 					embed.fields = []
 				} else {
@@ -207,6 +248,30 @@ client.on('message', msg => {
 					channel.send(embed)
 					embed.fields = []
 				}
+			} else {
+				newUser.id = member.id.toString()
+				data.push(newUser)
+				save(data, dataFile)
+				data = load(dataFile)
+			}
+		} else if(cmnd === 'delBDay') {
+			userInDatabase(msg.author.id)
+			if (rVal === true) {
+				data[index].birthday = ""
+				save(data, dataFile)
+				data = load(dataFile)
+
+				embed.setTitle('Success')
+				embed.addField('Successfully removed your birthday', 'You won\'t be notified about your birthday anymore!')
+				channel.send(embed)
+				embed.fields = []
+			} else {
+				newUser.id = msg.author.id.toString()
+				data.push(newUser)
+				save(data, dataFile)
+				data = load(dataFile)
+
+				channel.send('Try again please!')
 			}
 		}
 	}
