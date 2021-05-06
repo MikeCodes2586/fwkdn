@@ -12,7 +12,7 @@ const dataFile = './data.json'
 
 let newUser = {
 	id: '',
-	mod: false,
+	mod: false
 }
 
 let rVal = false
@@ -26,10 +26,10 @@ function load(file = String) {
 
 function save(json = String, file = String) {
 	return fs.writeFileSync(
-		file, 
+		file,
 		JSON.stringify(
-			json, 
-			null, 
+			json,
+			null,
 			1
 		)
 	)
@@ -123,7 +123,7 @@ client.on('message', msg => {
 					embed.addField('This user isn\'t in this server', 'Try *>ban @[user to ban] [reason]*')
 					channel.send(embed)
 					embed.fields = []
-				} 
+				}
 			} else {
 				embed.setTitle('Error')
 				embed.addField('Some arguments are missing!!', 'Try *>ban @[user to ban] [reason]*')
@@ -159,7 +159,7 @@ client.on('message', msg => {
 					embed.addField('This user isn\'t in this server', 'Try *>kick @[user to kick] [reason]*')
 					channel.send(embed)
 					embed.fields = []
-				} 
+				}
 			} else {
 				embed.setTitle('Error')
 				embed.addField('Some arguments are missing!!', 'Try *>kick @[user to kick] [reason]*')
