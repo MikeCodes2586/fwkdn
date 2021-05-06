@@ -1,5 +1,5 @@
 # Just A Discord Bot
 
-This is going to be a general purpose discord bot for personal use
+This is going to be a general purpose discord bot for my personal use
 
-Licensed under MIT
+Use it if you want to but it's bad
