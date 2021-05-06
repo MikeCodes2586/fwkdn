@@ -61,35 +61,6 @@ function userInDatabase(id, bday) {
 	})
 }
 
-/*channel ids: 
- * 756831344364879875
- * 749210894692515880
-*/
-function bDayCheck() {
-	data.forEach(obj => {
-		Object.entries(obj).forEach(([key, value]) => {
-			if (key === 'id') {
-				bdayid = value
-			}
-
-			if (key === 'birthday') {
-				if (value !== "") {
-					let date = value
-					let dateArr = date.split('.')
-					
-					if (parseInt(dateArr[0]) === time.getDate() && parseInt(dateArr[1]) === time.getMonth() + 1) {
-						embed.setTitle('Happy Birthday')
-						embed.addField(`<@everyone> Today is <@${bdayid}>'s birthday`, 'Congratulations!!!')
-						client.channels.cache.get('749210894692515880').send(embed)
-						client.channels.cache.get('749210894692515880').send(embed)
-						embed.fields = []
-					}
-				}
-			}
-		})
-	})
-}
-
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}`)
 
@@ -220,58 +191,6 @@ client.on('message', msg => {
 				embed.addField('Some arguments are missing!!', 'Try *>kick @[user to kick] [reason]*')
 				channel.send(embed)
 				embed.fields = []
-			}
-		} else if(cmnd === 'addBDay') {
-			userInDatabase(msg.author.id)
-			if(rVal === true) {
-				if (!args[0]) {
-					embed.setTitle('Error')
-					embed.addField('No date specified!', 'Use `>addBDay dd.mm`')
-					channel.send(embed)
-					embed.fields = []
-					return
-				}
-				let date = args[0]
-				let dateArr = date.split('.')
-
-				if(dateArr[0].length > 2 || dateArr[0].length < 1 || dateArr[1].length > 2 || dateArr[1].length < 1 || dateArr.length > 2 || dateArr.length < 2 || parseInt(dateArr[0]) > 31 || parseInt(args[0]) < 1 || parseInt(args[1]) > 12 || parseInt(args[1]) < 1) {
-					embed.setTitle('Error')
-					embed.addField('Some values are wrong!', 'Try `>addBDay day.month`, day and month being numbers')
-					channel.send(embed)
-					embed.fields = []
-				} else {
-					data[index].birthday = args[0]
-					save(data, dataFile)
-					data = load(dataFile)
-					embed.setTitle('Success')
-					embed.addField('Successfully added your birthday!', 'You will now be congratulated on your birthday')
-					channel.send(embed)
-					embed.fields = []
-				}
-			} else {
-				newUser.id = member.id.toString()
-				data.push(newUser)
-				save(data, dataFile)
-				data = load(dataFile)
-			}
-		} else if(cmnd === 'delBDay') {
-			userInDatabase(msg.author.id)
-			if (rVal === true) {
-				data[index].birthday = ""
-				save(data, dataFile)
-				data = load(dataFile)
-
-				embed.setTitle('Success')
-				embed.addField('Successfully removed your birthday', 'You won\'t be notified about your birthday anymore!')
-				channel.send(embed)
-				embed.fields = []
-			} else {
-				newUser.id = msg.author.id.toString()
-				data.push(newUser)
-				save(data, dataFile)
-				data = load(dataFile)
-
-				channel.send('Try again please!')
 			}
 		}
 	}
