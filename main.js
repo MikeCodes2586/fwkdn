@@ -4,8 +4,6 @@ const fs = require('fs')
 
 const { token, prefix } = require('./info.json')
 
-const time = new Date()
-
 const embed = new Discord.MessageEmbed() // sets embed defaults
     .setColor("#39ff14") // neon green
 //
@@ -15,12 +13,10 @@ const dataFile = './data.json'
 let newUser = {
 	id: '',
 	mod: false,
-	birthday: ''
 }
 
 let rVal = false
 let index
-let BDay
 
 function load(file = String) {
 	return JSON.parse(
@@ -41,20 +37,13 @@ function save(json = String, file = String) {
 
 let data = load(dataFile)
 
-function userInDatabase(id, bday) {
+function userInDatabase(id) {
 	data.forEach(obj => {
 		Object.entries(obj).forEach(([key, value]) => {
 			if (key === 'id') {
 				if (value === id) {
 					rVal = true
 					index = data.findIndex(x => x.id === value)
-					if(bday === true) {
-						if (data[index].birthday) {
-							BDay = data[index].birthday
-						} else {
-							return
-						}
-					}
 				}
 			}
 		})
@@ -64,21 +53,6 @@ function userInDatabase(id, bday) {
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}`)
 
-	repeatBDayCheck = setInterval(bDayCheck, 86400000)
-
-	client.guilds.cache.forEach(guild => {
-		guild.members.cache.forEach(member => {
-			userInDatabase(member.id)
-			if (rVal === true) {
-				return
-			} else {
-				newUser.id = member.id.toString()
-				data.push(newUser)
-				save(data, dataFile)
-				data = load(dataFile)
-			}
-		})
-	})
 })
 
 client.on('message', msg => {
